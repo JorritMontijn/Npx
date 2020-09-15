@@ -1,10 +1,9 @@
-function loadDataNpx
+function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim)
 
 %% find data
 	strDataSourcePath = 'D:\Data\Processed\Neuropixels\';
 	sFiles = dir([strDataSourcePath '*.mat']);
 	cellFiles = {sFiles(:).name}';
-	strName = replace([lower(strArea) strRunStim],lower(cellRepStr(:,1)),cellRepStr(:,2));
 	
 	%% go through files
 	clear sAggStim;
@@ -45,9 +44,9 @@ function loadDataNpx
 		end
 	end
 	if ~exist('sAggStim','var')
-		continue;
+		return;
 	end
 	
 	cellRecIdx = {sAggStim.Rec};
-	fprintf('Found %d cells from %d recordings in "%s" [%s]\n',intNeurons,numel(cellRecIdx),strRunType,getTime);
-	
+	fprintf('Found %d cells from %d recordings in "%s" [%s]\n',intNeurons,numel(cellRecIdx),strArea,getTime);
+end
