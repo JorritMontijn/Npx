@@ -38,17 +38,18 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim)
 		fprintf('Loading %s [%s]\n',cellFiles{intFile},getTime);
 		sLoad = load([strDataSourcePath cellFiles{intFile}]);
 		sAP = sLoad.sAP;
+		cellClustAreas = {sAP.sCluster(:).Area};
 		intNewFile = 1;
 		%check if neuron is in target area
 		for intClust=1:numel(sAP.sCluster)
-			strClustArea = sAP.sCluster(intClust).Area;
+			strClustArea = cellClustAreas{intClust};
 			%KiloSort's "good" classification mainly depends on the contamination being lower than 0.1, so these inclusion
 			%criteria should be very similar. For cells with low spike numbers, however, the contamination can be low while 
 			%the "good" classification is set to 0; that's why we use either here
 			if ~isempty(strClustArea) && contains(strClustArea,strArea,'IgnoreCase',true) && (sAP.sCluster(intClust).KilosortGood || sAP.sCluster(intClust).Contamination < 0.1)
 				%% aggregate data
 				%check if stim type is present
-				indUseStims = ismember(cellfun(@(x) x.structEP.strFile,sAP.cellStim,'uniformoutput',false),strRunStim);
+				indUseStims = contains(cellfun(@(x) x.structEP.strFile,sAP.cellStim,'uniformoutput',false),strRunStim,'IgnoreCase',true);
 				if isempty(indUseStims) || ~any(indUseStims)
 					continue;
 				end
