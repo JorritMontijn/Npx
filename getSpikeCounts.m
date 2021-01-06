@@ -26,15 +26,16 @@ function matSpikeCounts = getSpikeCounts(varData,vecStart,vecStop)
 		matSpikeCounts = zeros(length(varData),intEpochs);
 		
 		%loop through cells
-		for intNeuron=1:length(varData)
+		parfor intNeuron=1:length(varData)
 			%get data for this neuron
 			vecTimestamps = varData{intNeuron};
 			intSpikes = length(vecTimestamps);
-			if toc(hTic) > 5
-				hTic = tic;
-				fprintf('Getting spike count for neuron %d/%d; %d spikes, %d epochs [%s]\n',intNeuron,length(varData),intSpikes,intEpochs,getTime);
-				pause(0);
-			end
+			%if toc(hTic) > 5
+			%	hTic = tic;
+			%	fprintf('Getting spike count for neuron %d/%d; %d spikes, %d epochs [%s]\n',intNeuron,length(varData),intSpikes,intEpochs,getTime);
+			%	pause(0);
+			%end
+			vecNeuronR = zeros(1,intEpochs);
 			
 			if intSpikes > 0
 				%perform counting procedure
@@ -48,10 +49,11 @@ function matSpikeCounts = getSpikeCounts(varData,vecStart,vecStop)
 					intBinBeforeEnd = find(vecTimestamps(intSpike) < vecStop,1,'first');
 					intBinAfterStart = find(vecTimestamps(intSpike) > vecStart,1,'last');
 					if ~isempty(intBinBeforeEnd) && ~isempty(intBinAfterStart) && intBinBeforeEnd == intBinAfterStart
-						matSpikeCounts(intNeuron,intBinBeforeEnd) = matSpikeCounts(intNeuron,intBinBeforeEnd) + 1;
+						vecNeuronR(intBinBeforeEnd) = vecNeuronR(intBinBeforeEnd) + 1;
 					end
 				end
 			end
+			matSpikeCounts(intNeuron,:) = vecNeuronR;
 		end
 		
 	else
