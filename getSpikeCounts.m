@@ -34,26 +34,9 @@ function matSpikeCounts = getSpikeCounts(varData,vecStart,vecStop)
 	else
 		%data is single neuron
 		vecTimestamps = varData;
-		intSpikes = length(vecTimestamps);
-		%pre-allocate output
-		matSpikeCounts = zeros(1,intEpochs);
-		if intSpikes == 0
-			%if no spikes, skip counting
-			matSpikeCounts=zeros(1,intEpochs);
-		else
-			%vectorization is MUCH slower than loop
-			%matSpikes = repmat(vecTimestamps',[1 intEpochs]);
-			%matSpikeCounts(intNeuron,:) = sum(matSpikes >= repmat(vecStart,[intSpikes 1]) & matSpikes < repmat(vecStop,[intSpikes 1]),1);
-			
-			%ah yes, good old loops...
-			for intSpike=1:intSpikes
-				intBinBeforeEnd = find(vecTimestamps(intSpike) < vecStop,1,'first');
-				intBinAfterStart = find(vecTimestamps(intSpike) > vecStart,1,'last');
-				if ~isempty(intBinBeforeEnd) && ~isempty(intBinAfterStart) && intBinBeforeEnd == intBinAfterStart
-					matSpikeCounts(1,intBinBeforeEnd) = matSpikeCounts(1,intBinBeforeEnd) + 1;
-				end
-			end
-		end
+		vecBins = sort(cat(1,vecStart(1)-1,vecStart(:),vecStop(:),vecStop(end)+1));
+		vecSpikes = histcounts(vecTimestamps,vecBins);
+		matSpikeCounts = vecSpikes(2:2:end);
 	end
 end
 
