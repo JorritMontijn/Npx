@@ -2,16 +2,18 @@ function [structStim] = catstim(cellStimCell)
 	%catstim Concatatenates stimulus fields
 	%   [structStim] = catstim(cellStimCell)
 	
-	structStim= cellStimCell{1}.structEP;
+	structStim= cellStimCell{1};
 	intRecs = numel(cellStimCell);
 	for intRec=2:intRecs
-		intStimNr = cellStimCell{intRec}.structEP.intStimNumber;
-		cellFields= fieldnames(cellStimCell{intRec}.structEP);
-		vecSize = structfun(@numel,cellStimCell{intRec}.structEP);
+		intStimNr = cellStimCell{intRec}.intStimNumber;
+		cellFields= fieldnames(cellStimCell{intRec});
+		vecSize = structfun(@numel,cellStimCell{intRec});
 		vecCatFields = find(vecSize==intStimNr);
 		for intField=vecCatFields(:)'
 			strField = cellFields{intField};
-			structStim.(strField) = cat(2,flat(structStim.(strField))',flat(cellStimCell{intRec}.structEP.(strField))');
+			if isfield(structStim,strField) && isfield(cellStimCell{intRec},strField)
+				structStim.(strField) = cat(2,flat(structStim.(strField))',flat(cellStimCell{intRec}.(strField))');
+			end
 		end
 	end
 end	

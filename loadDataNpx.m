@@ -11,9 +11,8 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 	%sAggNeuron; [1 x N] structure for each neuron corresponding to your query
 	%
 	%Notes:
-	%sAggStim contains the fields .cellBlock and .Rec; cellBlock contains
-	%recording metadata in cellBlock{i}.sParamsSGL and stimulus variables in
-	%cellBlock{i}.structEP
+	%sAggStim contains the fields .cellBlock and .Exp; cellBlock contains
+	%stimulus variables
 	%
 	%sAggNeuron contains several fields with information on the neuron,
 	%including the source recording (.Rec) and spike times (.SpikeTimes)
@@ -22,7 +21,7 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 	
 	%% find data
 	if ~exist('strDataSourcePath','var') || isempty(strDataSourcePath)
-		strDataSourcePath = 'D:\Data\Processed\Neuropixels\';
+		strDataSourcePath = 'F:\Data\Processed\Neuropixels\';
 	end
 	if exist(strDataSourcePath,'dir') == 0
 		fprintf('Cannot find default path "%s"\n',strDataSourcePath);
@@ -60,13 +59,13 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 					intNewFile = 0;
 					sAggNeuron(1) = sAP.sCluster(intClust);
 					sAggStim(1).cellBlock = sAP.cellBlock(indUseStims);
-					sAggStim(1).Rec = sAggNeuron(end).Rec;
+					sAggStim(1).Exp = sAggNeuron(end).Exp;
 				elseif ~isempty(indUseStims) && any(indUseStims)
 					sAggNeuron(end+1) = sAP.sCluster(intClust);
 				end
 				if intNewFile
 					sAggStim(end+1).cellBlock = sAP.cellBlock(indUseStims);
-					sAggStim(end).Rec = sAggNeuron(end).Rec;
+					sAggStim(end).Exp = sAggNeuron(end).Exp;
 					intNewFile = 0;
 				end
 				intNeurons = intNeurons + 1;
@@ -77,6 +76,6 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 		return;
 	end
 	
-	cellRecIdx = {sAggStim.Rec};
-	fprintf('Found %d cells from %d recordings in "%s" [%s]\n',intNeurons,numel(cellRecIdx),strArea,getTime);
+	cellExpIdx = {sAggStim.Exp};
+	fprintf('Found %d cells from %d recordings in "%s" [%s]\n',intNeurons,numel(cellExpIdx),strArea,getTime);
 end
