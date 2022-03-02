@@ -1,6 +1,6 @@
-function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
+function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 %loadDataNpx Loads neuropixels data for requested area/stimulus combination
-	%   [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
+	%   [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 	%
 	%Inputs:
 	% - strArea; name of area, e.g. 'Primary visual', 'Lateral posterior nucleus', etc
@@ -9,6 +9,7 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 	%Outputs:
 	%sAggStim; [1 x S] structure for each recording corresponding to your query
 	%sAggNeuron; [1 x N] structure for each neuron corresponding to your query
+	%sSources; [1 x S] structure for each recording corresponding to your query
 	%
 	%Notes:
 	%sAggStim contains the fields .cellBlock and .Exp; cellBlock contains
@@ -33,6 +34,7 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 	%% go through files
 	clear sAggStim;
 	clear sAggNeuron;
+	clear sSources;
 	intNeurons = 0;
 	for intFile=1:numel(cellFiles)
 		%% load
@@ -55,17 +57,24 @@ function [sAggStim,sAggNeuron]=loadDataNpx(strArea,strRunStim,strDataSourcePath)
 					continue;
 				end
 				%add data
+				
 				if intNeurons == 0
 					intNewFile = 0;
 					sAggNeuron(1) = sAP.sCluster(intClust);
 					sAggStim(1).cellBlock = sAP.cellBlock(indUseStims);
 					sAggStim(1).Exp = sAggNeuron(end).Exp;
+					sAggStim(1).File = [strDataSourcePath cellFiles{intFile}];
+					sAP.sSources.Exp = sAggNeuron(end).Exp;
+					sSources(1) = sAP.sSources;
 				elseif ~isempty(indUseStims) && any(indUseStims)
 					sAggNeuron(end+1) = sAP.sCluster(intClust);
 				end
 				if intNewFile
 					sAggStim(end+1).cellBlock = sAP.cellBlock(indUseStims);
 					sAggStim(end).Exp = sAggNeuron(end).Exp;
+					sAggStim(end).File = [strDataSourcePath cellFiles{intFile}];
+					sAP.sSources.Exp = sAggNeuron(end).Exp;
+					sSources(end+1) = sAP.sSources;
 					intNewFile = 0;
 				end
 				intNeurons = intNeurons + 1;
