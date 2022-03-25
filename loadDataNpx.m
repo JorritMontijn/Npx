@@ -64,6 +64,9 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 					sAggStim(1).cellBlock = sAP.cellBlock(indUseStims);
 					sAggStim(1).Exp = sAggNeuron(end).Exp;
 					sAggStim(1).File = [strDataSourcePath cellFiles{intFile}];
+					if isfield(sAP,'sPupil')
+						sAggStim(1).Pupil = sAP.sPupil;
+					end
 					sAP.sSources.Exp = sAggNeuron(end).Exp;
 					sSources(1) = sAP.sSources;
 				elseif ~isempty(indUseStims) && any(indUseStims)
@@ -71,6 +74,9 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 				end
 				if intNewFile
 					sAggStim(end+1).cellBlock = sAP.cellBlock(indUseStims);
+					if isfield(sAP,'sPupil')
+						sAggStim(end).Pupil = sAP.sPupil;
+					end
 					sAggStim(end).Exp = sAggNeuron(end).Exp;
 					sAggStim(end).File = [strDataSourcePath cellFiles{intFile}];
 					sAP.sSources.Exp = sAggNeuron(end).Exp;
