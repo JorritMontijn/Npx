@@ -88,6 +88,9 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 		end
 	end
 	if ~exist('sAggStim','var')
+		sAggStim = [];
+		sAggNeuron = [];
+		sSources = [];
 		return;
 	end
 	
