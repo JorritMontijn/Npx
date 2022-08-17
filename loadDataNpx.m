@@ -60,6 +60,9 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 				
 				if intNeurons == 0
 					intNewFile = 0;
+					if isfield(sAP.sCluster,'dPrimeLR')
+						sAP.sCluster = rmfield(sAP.sCluster,'dPrimeLR');
+					end
 					sAggNeuron(1) = sAP.sCluster(intClust);
 					sAggStim(1).cellBlock = sAP.cellBlock(indUseStims);
 					sAggStim(1).Exp = sAggNeuron(end).Exp;
@@ -70,6 +73,9 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 					sAP.sSources.Exp = sAggNeuron(end).Exp;
 					sSources(1) = sAP.sSources;
 				elseif ~isempty(indUseStims) && any(indUseStims)
+					if isfield(sAP.sCluster,'dPrimeLR')
+						sAP.sCluster = rmfield(sAP.sCluster,'dPrimeLR');
+					end
 					sAggNeuron(end+1) = sAP.sCluster(intClust);
 				end
 				if intNewFile
