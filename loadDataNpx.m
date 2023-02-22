@@ -76,6 +76,9 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 					if isfield(sAP.sCluster,'dPrimeLR')
 						sAP.sCluster = rmfield(sAP.sCluster,'dPrimeLR');
 					end
+					if isfield(sAP.sCluster,'Waveform')
+						sAP.sCluster = rmfield(sAP.sCluster,'Waveform');
+					end
 					sAggNeuron(end+1) = sAP.sCluster(intClust);
 				end
 				if intNewFile
