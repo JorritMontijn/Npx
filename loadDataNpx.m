@@ -28,7 +28,7 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 		fprintf('Cannot find default path "%s"\n',strDataSourcePath);
 		strDataSourcePath = input('Please enter path to .mat data files:\n  ','s');
 	end
-	sFiles = dir([strDataSourcePath '*.mat']);
+	sFiles = dir(fullpath(strDataSourcePath,'*.mat'));
 	cellFiles = {sFiles(:).name}';
 	
 	%% go through files
@@ -39,7 +39,7 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 	for intFile=1:numel(cellFiles)
 		%% load
 		fprintf('Loading %s [%s]\n',cellFiles{intFile},getTime);
-		sLoad = load([strDataSourcePath cellFiles{intFile}]);
+		sLoad = load(fullpath(strDataSourcePath,cellFiles{intFile}));
 		sAP = sLoad.sAP;
 		cellClustAreas = {sAP.sCluster(:).Area};
 		intNewFile = 1;
