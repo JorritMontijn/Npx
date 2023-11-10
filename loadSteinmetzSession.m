@@ -138,6 +138,7 @@ function sAP = loadSteinmetzSession(strSesPath)
 	
 	sCluster = struct;
 	%assign to object
+	intClustEntry = 0;
 	sCluster(intTotClustNum).Depth = nan;%depth on probe
 	sCluster(intTotClustNum).Area = '';
 	sCluster(intTotClustNum).DepthBelowIntersect = nan;%depth in brain
@@ -241,24 +242,25 @@ function sAP = loadSteinmetzSession(strSesPath)
 			sOut = getClusterQuality(vecSpikeTimes,0);
 			
 			%assign to object
-			sCluster(intCluster).Depth = dblDepth;%depth on probe
-			sCluster(intCluster).Area = strArea;
-			sCluster(intCluster).DepthBelowIntersect = nan;%depth in brain
+			intClustEntry = intClustEntry + 1;
+			sCluster(intClustEntry).Depth = dblDepth;%depth on probe
+			sCluster(intClustEntry).Area = strArea;
+			sCluster(intClustEntry).DepthBelowIntersect = nan;%depth in brain
 			
-			sCluster(intCluster).Exp = strExp;
-			sCluster(intCluster).Rec = strRec;
-			sCluster(intCluster).SubjectType = 'BL6';
-			sCluster(intCluster).Subject = strSubject;
-			sCluster(intCluster).Date = strDate;
-			sCluster(intCluster).Probe = intProbe;
-			sCluster(intCluster).Cluster = intCluster;
-			sCluster(intCluster).IdxClust = intClustID;
-			sCluster(intCluster).SpikeTimes = vecSpikeTimes;
-			sCluster(intCluster).Waveform = vecWaveform;
-			sCluster(intCluster).NonStationarity = sOut.dblNonstationarityIndex;
-			sCluster(intCluster).Violations1ms = sOut.dblViolIdx1ms;
-			sCluster(intCluster).Violations2ms = sOut.dblViolIdx2ms;
-			sCluster(intCluster).Contamination = nan;
+			sCluster(intClustEntry).Exp = strExp;
+			sCluster(intClustEntry).Rec = strRec;
+			sCluster(intClustEntry).SubjectType = 'BL6';
+			sCluster(intClustEntry).Subject = strSubject;
+			sCluster(intClustEntry).Date = strDate;
+			sCluster(intClustEntry).Probe = intProbe;
+			sCluster(intClustEntry).Cluster = intCluster;
+			sCluster(intClustEntry).IdxClust = intClustID;
+			sCluster(intClustEntry).SpikeTimes = vecSpikeTimes;
+			sCluster(intClustEntry).Waveform = vecWaveform;
+			sCluster(intClustEntry).NonStationarity = sOut.dblNonstationarityIndex;
+			sCluster(intClustEntry).Violations1ms = sOut.dblViolIdx1ms;
+			sCluster(intClustEntry).Violations2ms = sOut.dblViolIdx2ms;
+			sCluster(intClustEntry).Contamination = nan;
 		end
 	end
 	
