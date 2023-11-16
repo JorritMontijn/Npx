@@ -220,7 +220,6 @@ function sAP = loadSteinmetzSession(strSesPath)
 		for intCluster=1:intClustNum
 			%%
 			%check if good, skip otherwise
-			sCluster(intCluster).KilosortGood = indClustGood(intCluster);
 			%if ~indClustGood(intCluster),continue;end
 			if toc(hTic)>5
 				fprintf('   %s, probe %d: %d/%d [%s]\n',strRec,intProbe,intCluster,intClustNum,getTime);
@@ -240,6 +239,12 @@ function sAP = loadSteinmetzSession(strSesPath)
 			
 			%get cluster quality
 			sOut = getClusterQuality(vecSpikeTimes,0);
+			dblNonstationarityIndex = sOut.dblNonstationarityIndex;
+			dblViolIdx1ms = sOut.dblViolIdx1ms;
+			dblViolIdx2ms = sOut.dblViolIdx2ms;
+			%dblNonstationarityIndex = nan;
+			%dblViolIdx1ms = nan;
+			%dblViolIdx2ms = nan;
 			
 			%assign to object
 			intClustEntry = intClustEntry + 1;
@@ -257,10 +262,11 @@ function sAP = loadSteinmetzSession(strSesPath)
 			sCluster(intClustEntry).IdxClust = intClustID;
 			sCluster(intClustEntry).SpikeTimes = vecSpikeTimes;
 			sCluster(intClustEntry).Waveform = vecWaveform;
-			sCluster(intClustEntry).NonStationarity = sOut.dblNonstationarityIndex;
-			sCluster(intClustEntry).Violations1ms = sOut.dblViolIdx1ms;
-			sCluster(intClustEntry).Violations2ms = sOut.dblViolIdx2ms;
+			sCluster(intClustEntry).NonStationarity = dblNonstationarityIndex;
+			sCluster(intClustEntry).Violations1ms = dblViolIdx1ms;
+			sCluster(intClustEntry).Violations2ms = dblViolIdx2ms;
 			sCluster(intClustEntry).Contamination = nan;
+			sCluster(intClustEntry).KilosortGood = indClustGood(intCluster);
 		end
 	end
 	
