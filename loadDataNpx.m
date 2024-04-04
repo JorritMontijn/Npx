@@ -49,7 +49,7 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 			%KiloSort's "good" classification mainly depends on the contamination being lower than 0.1, so these inclusion
 			%criteria should be very similar. For cells with low spike numbers, however, the contamination can be low while 
 			%the "good" classification is set to 0; that's why we use either here
-			if ~isempty(strClustArea) && contains(strClustArea,strArea,'IgnoreCase',true) && (sAP.sCluster(intClust).KilosortGood || sAP.sCluster(intClust).Contamination < 0.1)
+			if ~isempty(strClustArea) && contains(strClustArea,strArea,'IgnoreCase',true)
 				%% aggregate data
 				%check if stim type is present
 				indUseStims = contains(cellfun(@(x) x.strExpType,sAP.cellBlock,'uniformoutput',false),strRunStim,'IgnoreCase',true);
@@ -57,11 +57,14 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 					continue;
 				end
 				%add data
-				
+				cellRemFields = {'dPrimeLR','area'};
 				if intNeurons == 0
 					intNewFile = 0;
-					if isfield(sAP.sCluster,'dPrimeLR')
-						sAP.sCluster = rmfield(sAP.sCluster,'dPrimeLR');
+					for intRemField=1:numel(cellRemFields)
+						strRemField = cellRemFields{intRemField};
+						if isfield(sAP.sCluster,strRemField)
+							sAP.sCluster = rmfield(sAP.sCluster,strRemField);
+						end
 					end
 					sAggNeuron(1) = sAP.sCluster(intClust);
 					sAggStim(1).cellBlock = sAP.cellBlock(indUseStims);
@@ -73,8 +76,11 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 					sAP.sSources.Exp = sAggNeuron(end).Exp;
 					sSources(1) = sAP.sSources;
 				elseif ~isempty(indUseStims) && any(indUseStims)
-					if isfield(sAP.sCluster,'dPrimeLR')
-						sAP.sCluster = rmfield(sAP.sCluster,'dPrimeLR');
+					for intRemField=1:numel(cellRemFields)
+						strRemField = cellRemFields{intRemField};
+						if isfield(sAP.sCluster,strRemField)
+							sAP.sCluster = rmfield(sAP.sCluster,strRemField);
+						end
 					end
 					sAggNeuron(end+1) = sAP.sCluster(intClust);
 				end
@@ -100,6 +106,15 @@ function [sAggStim,sAggNeuron,sSources]=loadDataNpx(strArea,strRunStim,strDataSo
 		return;
 	end
 	
+	%select cells
+	if isfield(sAggNeuron,'bc_unitType') 
+		indKeepCells= true(size(sAggNeuron));%~strcmp({sAggNeuron.bc_unitType},'NOISE');
+	elseif isfield(sAggNeuron,'KilosortGood') && isfield(sAggNeuron,'Contamination')
+		indKeepCells= [sAggNeuron.KilosortGood] | [sAggNeuron.Contamination] < 0.1;
+	else
+		indKeepCells = true(size(sAggNeuron));
+	end
+	sAggNeuron = sAggNeuron(indKeepCells);
 	cellExpIdx = {sAggStim.Exp};
-	fprintf('Found %d cells from %d recordings in "%s" [%s]\n',intNeurons,numel(cellExpIdx),strArea,getTime);
+	fprintf('Found %d cells from %d recordings in "%s" [%s]\n',numel(sAggNeuron),numel(cellExpIdx),strArea,getTime);
 end
